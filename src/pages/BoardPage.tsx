@@ -38,6 +38,7 @@ import CardModal from '../components/Board/CardModal';
 import AddListDialog from '../components/Board/AddListDialog';
 import AddCardDialog from '../components/Board/AddCardDialog';
 import * as RadixDialog from '@radix-ui/react-dialog';
+import { Plus, MoreHorizontal, Loader2 } from 'lucide-react';
 
 const BoardPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -284,65 +285,38 @@ const BoardPage: React.FC = () => {
 
   if (!currentBoard) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Loading board...
-        </Typography>
-      </Container>
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+        <span className="text-lg">Loading board...</span>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'hidden' }}>
+    <div className="h-full overflow-hidden flex flex-col">
       {/* Board Header */}
-      <Box
-        sx={{
-          px: 3,
-          py: 2,
-          borderBottom: 1,
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box>
-            <Typography variant="h4" component="h1" gutterBottom={false}>
-              {currentBoard.title}
-            </Typography>
-            {currentBoard.description && (
-              <Typography variant="body2" color="text.secondary">
-                {currentBoard.description}
-              </Typography>
-            )}
-          </Box>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={() => setIsAddListOpen(true)}
-            >
-              Add List
-            </Button>
-            <IconButton>
-              <MoreHoriz />
-            </IconButton>
-          </Box>
-        </Box>
-      </Box>
+      <div className="px-6 py-4 border-b bg-background flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">{currentBoard.title}</h1>
+          {currentBoard.description && (
+            <p className="text-sm text-muted-foreground">{currentBoard.description}</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <button
+            className="flex items-center gap-2 bg-primary text-white rounded px-4 py-2 hover:bg-primary/90 transition"
+            onClick={() => setIsAddListOpen(true)}
+          >
+            <Plus className="h-5 w-5" /> Add List
+          </button>
+          <button className="p-2 rounded-full hover:bg-muted">
+            <MoreHorizontal className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
 
       {/* Board Content */}
-      <Box
-        sx={{
-          flex: 1,
-          overflow: 'auto',
-          p: 3,
-          display: 'flex',
-          gap: 3,
-          minHeight: 'calc(100vh - 64px - 80px)', // AppBar + Header
-        }}
-      >
+      <div className="flex-1 overflow-auto p-6 flex gap-6 min-h-[calc(100vh-64px-80px)]">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -355,10 +329,8 @@ const BoardPage: React.FC = () => {
             items={currentBoard.lists.map(list => list.id)}
             strategy={horizontalListSortingStrategy}
           >
-            {currentBoard.lists.map((list,index) => 
-             {
-              console.log(list,"list");
-              return <Column
+            {currentBoard.lists.map((list, index) => (
+              <Column
                 key={list.id}
                 column={list}
                 index={index}
@@ -376,10 +348,9 @@ const BoardPage: React.FC = () => {
                     onOpenModal={openCardModal}
                   />
                 ))}
-              </Column>}
-            )}
+              </Column>
+            ))}
           </SortableContext>
-
           <DragOverlay>
             {activeCard ? (
               <CardItem
@@ -390,44 +361,37 @@ const BoardPage: React.FC = () => {
             ) : null}
           </DragOverlay>
         </DndContext>
-
         {/* Add List Placeholder */}
-        <Box
-          sx={{
-            minWidth: 300,
-            backgroundColor: 'rgba(0,0,0,0.05)',
-            borderRadius: 2,
-            p: 2,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px dashed',
-            borderColor: 'grey.300',
-            '&:hover': {
-              backgroundColor: 'rgba(0,0,0,0.08)',
-              borderColor: 'primary.main',
-            },
-          }}
+        <div
+          className="min-w-[300px] bg-muted/20 rounded-lg p-4 cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-muted hover:bg-muted/30 hover:border-primary transition"
           onClick={() => setIsAddListOpen(true)}
         >
-          <Box sx={{ textAlign: 'center' }}>
-            <Add sx={{ fontSize: 32, color: 'text.secondary', mb: 1 }} />
-            <Typography variant="body2" color="text.secondary">
-              Add another list
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
+          <Plus className="h-8 w-8 text-muted-foreground mb-2" />
+          <span className="text-muted-foreground">Add another list</span>
+        </div>
+      </div>
 
       {/* Card Edit Modal (using Radix UI Dialog) */}
+      <RadixDialog.Root open={isCardModalOpen} onOpenChange={setIsCardModalOpen}>
+        <RadixDialog.Portal>
+          <RadixDialog.Overlay 
+            className="fixed inset-0 bg-black/50" 
+            style={{ zIndex: 15000 }}
+          />
+          <RadixDialog.Content 
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-background shadow-lg w-full max-w-2xl p-6 z-[15001]"
+            style={{ zIndex: 15001 }}
+            onClick={e => e.stopPropagation()}
+          >
             {selectedCard && isCardModalOpen && (
               <CardModal
                 card={selectedCard}
-                onClose={closeCardModal} // Still use this to update local state if needed
+                onClose={closeCardModal}
               />
             )}
-
+          </RadixDialog.Content>
+        </RadixDialog.Portal>
+      </RadixDialog.Root>
 
       {/* Add List Dialog */}
       <AddListDialog
@@ -436,13 +400,13 @@ const BoardPage: React.FC = () => {
         boardId={currentBoard?.id || ''}
       />
 
-      {/* Add Card Dialog (using Radix UI Dialog) */}
+      {/* Add Card Dialog */}
       <AddCardDialog
         open={isAddCardOpen}
         onOpenChange={setIsAddCardOpen}
         onAdd={handleCardAdd}
       />
-    </Box>
+    </div>
   );
 };
 

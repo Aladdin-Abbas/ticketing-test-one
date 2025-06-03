@@ -1,16 +1,4 @@
-
 import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Link,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
@@ -55,105 +43,22 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            width: '100%',
-            maxWidth: 400,
-          }}
-        >
-          <Typography variant="h4" component="h1" align="center" gutterBottom>
-            Join Us
-          </Typography>
-          <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-            Create your collaborative board account
-          </Typography>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <Box component="form" onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Full Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              margin="normal"
-              required
-              autoComplete="name"
-              autoFocus
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              margin="normal"
-              required
-              autoComplete="email"
-            />
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              margin="normal"
-              required
-              autoComplete="new-password"
-            />
-            <TextField
-              fullWidth
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              margin="normal"
-              required
-              autoComplete="new-password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={isLoading}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'Create Account'}
-            </Button>
-            
-            <Box textAlign="center">
-              <Link
-                component="button"
-                type="button"
-                variant="body2"
-                onClick={() => navigate('/login')}
-              >
-                Already have an account? Sign In
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md bg-white rounded-lg shadow p-8">
+        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+        <form className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input id="email" name="email" type="email" required className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20" />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input id="password" name="password" type="password" required className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20" />
+          </div>
+          <button type="submit" className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 transition">Register</button>
+        </form>
+      </div>
+    </div>
   );
 };
 
